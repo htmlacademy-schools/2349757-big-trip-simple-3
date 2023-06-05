@@ -2,6 +2,7 @@ import { render, replace, remove } from '../framework/render.js';
 import AddEventForm from '../view/add-event-form.js';
 import TripEvent from '../view/trips-event.js';
 import { UserAction, UpdateType } from '../const-data.js';
+import { isDatesEqual } from '../util.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -18,11 +19,16 @@ export default class TripEventPresenter {
 
   #event = null;
   #mode = Mode.DEFAULT;
+  #availableDestinations = null;
+  #availableOffers = null;
 
-  constructor(container, changeData, changeMode) {
+
+  constructor(container, changeData, changeMode, destinations, offers) {
     this.#container = container;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
+    this.#availableDestinations = destinations;
+    this.#availableOffers = offers;
   }
 
   init(event) {
@@ -35,10 +41,7 @@ export default class TripEventPresenter {
     this.#eventEditorComponent = new AddEventForm(event);
 
     this.#eventComponent.setArrowClickHandler(this.#replaceEventToForm);
-
-    // нажатие на кнопку Save
-    this.#eventEditorComponent.setFormSubmitListener(this.#replaceFormToEvent);
-    // нажатие на стрелку, чтобы закрыть форму
+    this.#eventEditorComponent.setFormSubmitListener(this.#handleFormSubmit);
     this.#eventEditorComponent.setCloseButtonClickListener(this.#replaceFormToEvent);
     this.#eventEditorComponent.setDeleteButtonClickListener(this.#handleDeleteClick);
 
@@ -61,9 +64,9 @@ export default class TripEventPresenter {
 
   #replaceFormToEvent = () => {
     this.#eventEditorComponent.reset(this.#event);
+    replace(this.#eventComponent, this.#eventEditorComponent);
     this.#eventEditorComponent.removeEscKeydownListener();
     this.#mode = Mode.DEFAULT;
-    replace(this.#eventComponent, this.#eventEditorComponent);
   };
 
   #replaceEventToForm = () => {
@@ -74,9 +77,18 @@ export default class TripEventPresenter {
     replace(this.#eventEditorComponent, this.#eventComponent);
   };
 
-  #handleFormSubmit = (tripEvent) => {
+  #handleFormSubmit = (update) => {
+    const isMinorUpdate =
+      !isDatesEqual(this.#event.dateTo, update.dateTo) ||
+      this.#event.basePrice !== update.basePrice;
+
+    this.#changeData(
+      UserAction.UPDATE_TASK,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update,
+    );
+
     this.#replaceFormToEvent();
-    this.#changeData(tripEvent);
   };
 
   destroy = () => {
@@ -91,13 +103,12 @@ export default class TripEventPresenter {
     }
   };
 
-  #removeElement = () => {
+  #handleDeleteClick = (event) => {
     this.#eventEditorComponent.removeEscKeydownListener();
-    this.destroy();
-  };
-
-  #handleDeleteClick = (point) => {
-    this.#eventEditorComponent.removeEscKeydownListener();
-    this.#changeData();
+    this.#changeData(
+      UserAction.DELETE_TASK,
+      UpdateType.MINOR,
+      event,
+    );
   };
 }
