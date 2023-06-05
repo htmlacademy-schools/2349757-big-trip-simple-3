@@ -1,7 +1,7 @@
 import { render, replace, remove } from '../framework/render.js';
 import AddEventForm from '../view/add-event-form.js';
 import TripEvent from '../view/trips-event.js';
-import { UserAction, UpdateType } from '../const-data.js';
+import { USER_ACTION, UPDATE_LIST } from '../const-data.js';
 import { isDatesEqual } from '../util.js';
 
 const Mode = {
@@ -83,8 +83,8 @@ export default class TripEventPresenter {
       this.#event.basePrice !== update.basePrice;
 
     this.#changeData(
-      UserAction.UPDATE_TASK,
-      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      USER_ACTION.UPDATE_TASK,
+      isMinorUpdate ? UPDATE_LIST.MINOR : UPDATE_LIST.PATCH,
       update,
     );
 
@@ -106,8 +106,8 @@ export default class TripEventPresenter {
   #handleDeleteClick = (event) => {
     this.#eventEditorComponent.removeEscKeydownListener();
     this.#changeData(
-      UserAction.DELETE_TASK,
-      UpdateType.MINOR,
+      USER_ACTION.DELETE_TASK,
+      UPDATE_LIST.MINOR,
       event,
     );
   };

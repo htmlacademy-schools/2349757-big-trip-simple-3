@@ -6,21 +6,21 @@ import TripEventPresenter from './trip-event-presenter.js';
 import NewEventPresenter from './new-event-presenter.js';
 import { filter, sortDays, sortPrices } from '../util.js';
 import LoadingView from '../view/loading.js';
-import { SORT_TYPE, UpdateType, UserAction, FILTER_TYPE } from '../const-data.js';
+import { SORT_LIST, UPDATE_LIST, USER_ACTION, FILTER_LIST } from '../const-data.js';
 
 class TripPresenter {
+  #tripModel = null;
+  #filterModel = null;
+  #loadingComponent = new LoadingView();
+  #isLoading = true;
+  #filterType = FILTER_LIST.EVERYTHING;
+  #sortType = SORT_LIST.DAY;
   #tripEventsList = new TripEventsList();
   #emptyListComponent = null;
   #eventSorter = null;
   #tripEventPresenter = new Map();
   #container = null;
   #newEventPresenter = null;
-  #tripModel = null;
-  #filterModel = null;
-  #loadingComponent = new LoadingView();
-  #isLoading = true;
-  #filterType = FILTER_TYPE.EVERYTHING;
-  #sortType = SORT_TYPE.DAY;
 
   constructor (container, tripModel, filterModel) {
     this.#container = container;
@@ -42,17 +42,17 @@ class TripPresenter {
     const events = this.#tripModel.events;
     const filteredTasks = filter[this.#filterType](events);
     switch (this.#sortType) {
-      case SORT_TYPE.DAY:
+      case SORT_LIST.DAY:
         return filteredTasks.sort(sortDays);
-      case SORT_TYPE.PRICE:
+      case SORT_LIST.PRICE:
         return filteredTasks.sort(sortPrices);
     }
     return filteredTasks;
   }
 
   createTask = (callback) => {
-    this.#sortType = SORT_TYPE.DAY;
-    this.#filterModel.setFilter(UpdateType.MAJOR, FILTER_TYPE.EVERYTHING);
+    this.#sortType = SORT_LIST.DAY;
+    this.#filterModel.setFilter(UPDATE_LIST.MAJOR, FILTER_LIST.EVERYTHING);
     this.#newEventPresenter.init(callback, this.#tripModel.destinations, this.#tripModel.offers);
   };
 
@@ -90,19 +90,19 @@ class TripPresenter {
     }
 
     if (resetSortType) {
-      this.#sortType = SORT_TYPE.DAY;
+      this.#sortType = SORT_LIST.DAY;
     }
   };
 
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
-      case UserAction.UPDATE_TASK:
+      case USER_ACTION.UPDATE_TASK:
         this.#tripModel.updateEvent(updateType, update);
         break;
-      case UserAction.ADD_TASK:
+      case USER_ACTION.ADD_TASK:
         this.#tripModel.addEvent(updateType, update);
         break;
-      case UserAction.DELETE_TASK:
+      case USER_ACTION.DELETE_TASK:
         this.#tripModel.deleteEvent(updateType, update);
         break;
     }
@@ -110,18 +110,18 @@ class TripPresenter {
 
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
-      case UpdateType.PATCH:
+      case UPDATE_LIST.PATCH:
         this.#tripEventPresenter.get(data.id).init(data);
         break;
-      case UpdateType.MINOR:
+      case UPDATE_LIST.MINOR:
         this.#clearEventList();
         this.#renderBoard();
         break;
-      case UpdateType.MAJOR:
+      case UPDATE_LIST.MAJOR:
         this.#clearEventList({resetSortType: true});
         this.#renderBoard();
         break;
-      case UpdateType.INIT:
+      case UPDATE_LIST.INIT:
         this.#isLoading = false;
         remove(this.#loadingComponent);
     }
@@ -157,8 +157,8 @@ class TripPresenter {
       return;
     }
     const events = this.events;
-    const eventCount = events.length;
-    if (eventCount === 0) {
+    const countEvents = events.length;
+    if (countEvents === 0) {
       this.#renderEmptyList();
       return;
     }

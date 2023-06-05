@@ -1,14 +1,14 @@
 import {remove, render, RenderPosition} from '../framework/render.js';
 import {nanoid} from 'nanoid';
-import { UserAction, UpdateType } from '../const-data.js';
+import { USER_ACTION, UPDATE_LIST } from '../const-data.js';
 import AddEventForm from '../view/add-event-form.js';
 
 export default class NewEventPresenter {
-  #eventListContainer = null;
-  #changeData = null;
   #newEventForm = null;
   #destroyCallback = null;
   #availableDestinations = null;
+  #eventListContainer = null;
+  #changeData = null;
   #availableOffers = null;
 
   constructor(eventListContainer, changeData) {
@@ -49,8 +49,8 @@ export default class NewEventPresenter {
 
   #handleFormSubmit = (task) => {
     this.#changeData(
-      UserAction.ADD_TASK,
-      UpdateType.MINOR,
+      USER_ACTION.ADD_TASK,
+      UPDATE_LIST.MINOR,
       {id: nanoid(), ...task},
     );
     this.destroy();

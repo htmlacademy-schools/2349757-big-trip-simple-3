@@ -1,11 +1,12 @@
 import Observable from '../framework/observable.js';
-import { UpdateType } from '../const-data.js';
+import { UPDATE_LIST } from '../const-data.js';
 
-export default class TripModel extends Observable {
-  #events = [];
-  #destinations = null;
+export default class ModelTrip extends Observable {
   #offers = null;
   #eventsApiService = null;
+  #events = [];
+  #destinations = null;
+
 
   constructor(tasksApiService) {
     super();
@@ -25,11 +26,7 @@ export default class TripModel extends Observable {
       this.#offers = null;
     }
 
-    this._notify(UpdateType.INIT);
-  }
-
-  get events () {
-    return this.#events;
+    this._notify(UPDATE_LIST.INIT);
   }
 
   get destinations () {
@@ -39,6 +36,19 @@ export default class TripModel extends Observable {
   get offers () {
     return this.#offers;
   }
+
+  get events () {
+    return this.#events;
+  }
+
+  addEvent = (type, update) => {
+    this.#events = [
+      update,
+      ...this.#events,
+    ];
+
+    this._notify(type, update);
+  };
 
   updateEvent = async (type, update) => {
     const index = this.#events.findIndex((event) => event.id === update.id);
@@ -55,15 +65,6 @@ export default class TripModel extends Observable {
       ...this.#events.slice(index + 1),
     ];
     this._notify(type, updatedEvent);
-  };
-
-  addEvent = (type, update) => {
-    this.#events = [
-      update,
-      ...this.#events,
-    ];
-
-    this._notify(type, update);
   };
 
   deleteEvent = (type, update) => {

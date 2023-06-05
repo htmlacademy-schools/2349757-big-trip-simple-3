@@ -13,13 +13,13 @@ export default class EventsApi extends ApiService {
       .then(ApiService.parseResponse);
   }
 
-  get destinations() {
-    return this._load({url: 'destinations'})
+  get offers() {
+    return this._load({url: 'offers'})
       .then(ApiService.parseResponse);
   }
 
-  get offers() {
-    return this._load({url: 'offers'})
+  get destinations() {
+    return this._load({url: 'destinations'})
       .then(ApiService.parseResponse);
   }
 
