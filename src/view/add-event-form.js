@@ -340,15 +340,12 @@ export default class AddEventForm extends AbstractStatefulView {
 
   setFormSubmitListener = (callback) => {
     this._callback.formSubmit = callback;
-    const newState = AddEventForm.parseStateToEvent(this._state);
-    if (isFormValid(newState)) {
-      this._callback.formSubmit(newState);
-    }
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   };
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    const newState = EventEditFormView.parseStateToEvent(this._state);
+    const newState = AddEventForm.parseStateToEvent(this._state);
     if (isFormValid(newState, this.#availableDestinations)) {
       this._callback.formSubmit(newState);
     }
