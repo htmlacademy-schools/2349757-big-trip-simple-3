@@ -1,11 +1,40 @@
-import TripPresenter from './presenter/presenter';
-import { render } from './framework/render';
-import FiltersView from './view/filters-form';
-import TripModel from './model/trip-model';
+import TripPresenter from './presenter/presenter.js';
+import TripModel from './model/trip-model.js';
+import FilterModel from './model/filter-model.js';
+import FilterPresenter from './presenter/filter-presenter.js';
+import AddEventButton from './view/add-event-button.js';
+import { render } from './framework/render.js';
+import EventsApi from './api.js';
 
-const tripFiltersBlock = document.querySelector('.trip-controls__filters');
-const tripEventsSection = document.querySelector('.trip-events');
-const tripModel = new TripModel();
-render(new FiltersView(), tripFiltersBlock);
-const tripPresenter = new TripPresenter(tripEventsSection, tripModel);
+const AUTHORIZATION = 'Basic hS2sfS44wcl1sa2j';
+const END_POINT = 'https://18.ecmascript.pages.academy/big-trip';
+
+const filtersSection = document.querySelector('.trip-controls__filters');
+const pointssSection = document.querySelector('.trip-events');
+const buttonSection = document.querySelector('.trip-main');
+
+const tripModel = new TripModel(new EventsApi(END_POINT, AUTHORIZATION));
+const filterModel = new FilterModel();
+
+
+const tripPresenter = new TripPresenter(pointssSection, tripModel, filterModel);
 tripPresenter.init();
+const filterPresenter = new FilterPresenter(filtersSection, filterModel, tripModel);
+filterPresenter.init();
+
+const newPointButtonComponent = new AddEventButton;
+
+const handleNewPointFormClose = () => {
+  newPointButtonComponent.element.disabled = false;
+};
+
+const handleNewPointButtonClick = () => {
+  tripPresenter.createTask(handleNewPointFormClose);
+  newPointButtonComponent.element.disabled = true;
+};
+
+tripModel.init()
+  .finally(() => {
+    render(newPointButtonComponent, buttonSection);
+    newPointButtonComponent.setClickListener(handleNewPointButtonClick);
+  });
