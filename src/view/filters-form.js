@@ -1,14 +1,14 @@
-import { FILTER_TYPE } from '../const-data.js';
+import { FILTER_LIST } from '../const-data.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
 const createEventFiltersTemplate = (currentFilter) => `
   <form class="trip-filters" action="#" method="get">
     <div class="trip-filters__filter">
-      <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" ${currentFilter === FILTER_TYPE.EVERYTHING ? 'checked' : ''}>
+      <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" ${currentFilter === FILTER_LIST.EVERYTHING ? 'checked' : ''}>
       <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
     </div>
     <div class="trip-filters__filter">
-      <input id="filter-future" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="future" ${currentFilter === FILTER_TYPE.FUTURE ? 'checked' : ''}>
+      <input id="filter-future" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="future" ${currentFilter === FILTER_LIST.FUTURE ? 'checked' : ''}>
       <label class="trip-filters__filter-label" for="filter-future">Future</label>
     </div>
     <button class="visually-hidden" type="submit">Accept filter</button>

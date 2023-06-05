@@ -1,11 +1,12 @@
 import Observable from '../framework/observable.js';
-import { UpdateType } from '../const-data.js';
+import { UPDATE_LIST } from '../const-data.js';
 
-export default class TripModel extends Observable {
-  #events = [];
-  #destinations = null;
+export default class ModelTrip extends Observable {
   #offers = null;
   #eventsApiService = null;
+  #events = [];
+  #destinations = null;
+
 
   constructor(tasksApiService) {
     super();
@@ -25,11 +26,7 @@ export default class TripModel extends Observable {
       this.#offers = null;
     }
 
-    this._notify(UpdateType.INIT);
-  }
-
-  get events () {
-    return this.#events;
+    this._notify(UPDATE_LIST.INIT);
   }
 
   get destinations () {
@@ -40,26 +37,9 @@ export default class TripModel extends Observable {
     return this.#offers;
   }
 
-  updateEvent = async (type, update) => {
-    const index = this.#events.findIndex((event) => event.id === update.id);
-
-    if (index === -1) {
-      throw new Error('Can\'t update unexisting point');
-    }
-
-    try {
-      const response = await this.#eventsApiService.updateEvent(update);
-      const updatedEvent = this.#adaptToClient(response);
-      this.#events = [
-        ...this.#events.slice(0, index),
-        updatedEvent,
-        ...this.#events.slice(index + 1),
-      ];
-      this._notify(type, updatedEvent);
-    } catch(err) {
-      throw new Error('Can\'t update task');
-    }
-  };
+  get events () {
+    return this.#events;
+  }
 
   addEvent = (type, update) => {
     this.#events = [
@@ -68,6 +48,23 @@ export default class TripModel extends Observable {
     ];
 
     this._notify(type, update);
+  };
+
+  updateEvent = async (type, update) => {
+    const index = this.#events.findIndex((event) => event.id === update.id);
+
+    if (index === -1) {
+      throw new Error('Can\'t update unexisting point');
+    }
+
+    const response = await this.#eventsApiService.updateEvent(update);
+    const updatedEvent = this.#adaptToClient(response);
+    this.#events = [
+      ...this.#events.slice(0, index),
+      updatedEvent,
+      ...this.#events.slice(index + 1),
+    ];
+    this._notify(type, updatedEvent);
   };
 
   deleteEvent = (type, update) => {

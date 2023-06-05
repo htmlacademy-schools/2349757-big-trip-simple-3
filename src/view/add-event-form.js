@@ -229,7 +229,7 @@ export default class AddEventForm extends AbstractStatefulView {
   _restoreHandlers = () => {
     this.#setInnerHandlers();
     this.setFormSubmitListener(this._callback.formSubmit);
-    this.setCloseButtonClickListener(this._callback.closeForm);
+    this.setCloseButtonListener(this._callback.closeForm);
     this.setDeleteButtonClickListener(this._callback.delete);
     this.#setDateToPicker();
     this.#setDateFromPicker();
@@ -328,7 +328,7 @@ export default class AddEventForm extends AbstractStatefulView {
     }
   };
 
-  setCloseButtonClickListener = (callback) => {
+  setCloseButtonListener = (callback) => {
     this._callback.closeForm = callback;
     this.element.querySelector('.event__rollup-btn')?.addEventListener('click', this.#closeButtonClickHandler);
   };

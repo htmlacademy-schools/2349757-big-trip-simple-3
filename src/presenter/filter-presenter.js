@@ -1,36 +1,36 @@
 import {render, replace, remove} from '../framework/render.js';
 import FilterView from '../view/filters-form.js';
-import {UpdateType} from '../const-data.js';
+import {UPDATE_LIST} from '../const-data.js';
 
 export default class FilterPresenter {
+  #eventsModel = null;
+  #filterComponent = null;
   #filterContainer = null;
   #filterModel = null;
-  #eventsModel = null;
-
-  #filterComponent = null;
 
   constructor(filterContainer, filterModel, eventsModel) {
-    this.#filterContainer = filterContainer;
     this.#filterModel = filterModel;
     this.#eventsModel = eventsModel;
+    this.#filterContainer = filterContainer;
+
 
     this.#eventsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   init = () => {
-    const prevFilterComponent = this.#filterComponent;
+    const prevComponentFilter = this.#filterComponent;
 
     this.#filterComponent = new FilterView(this.#filterModel.filter);
     this.#filterComponent.setFilterChangeListener(this.#handleFilterChange);
 
-    if (prevFilterComponent === null) {
+    if (prevComponentFilter === null) {
       render(this.#filterComponent, this.#filterContainer);
       return;
     }
 
-    replace(this.#filterComponent, prevFilterComponent);
-    remove(prevFilterComponent);
+    replace(this.#filterComponent, prevComponentFilter);
+    remove(prevComponentFilter);
   };
 
   #handleModelEvent = () => {
@@ -42,6 +42,6 @@ export default class FilterPresenter {
       return;
     }
 
-    this.#filterModel.setFilter(UpdateType.MAJOR, filterType);
+    this.#filterModel.setFilter(UPDATE_LIST.MAJOR, filterType);
   };
 }

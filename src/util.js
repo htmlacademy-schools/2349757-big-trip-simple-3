@@ -1,11 +1,11 @@
 import dayjs from 'dayjs';
-import { FILTER_TYPE } from './const-data.js';
+import { FILTER_LIST } from './const-data.js';
 
 const getDate = (date) => dayjs(date).format('MMM D');
 const getTime = (date) => dayjs(date).format('HH-mm');
-const getFullDataTime = (date) => dayjs(date).format('DD/MM/YY HH:mm');
+const getFullTime = (date) => dayjs(date).format('DD/MM/YY HH:mm');
 
-const getWeightForNullDate = (dateA, dateB) => {
+const getWeightNullDate = (dateA, dateB) => {
   if (dateA === null && dateB === null) {
     return 0;
   }
@@ -21,31 +21,31 @@ const getWeightForNullDate = (dateA, dateB) => {
   return null;
 };
 
-const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'm');
+const dateEquals = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'm');
 
-const sortDays = (taskA, taskB) => {
-  const weight = getWeightForNullDate(taskA.dateTo, taskB.dateTo);
+const daySort = (taskA, taskB) => {
+  const weight = getWeightNullDate(taskA.dateTo, taskB.dateTo);
 
   return weight ?? dayjs(taskA.dateTo).diff(dayjs(taskB.dateTo));
 };
 
-const sortPrices = (taskA, taskB) => taskB.basePrice - taskA.basePrice;
+const priceSort = (taskA, taskB) => taskB.basePrice - taskA.basePrice;
 
-const isDateFuture = (date) => {
+const formValid = (state, availableDestinations) => {
+  const allIds = Object.keys(availableDestinations);
+
+  return (allIds.includes(`${state.destination - 1}`) && /^\d+$/.test(state.basePrice));
+};
+
+const dateFuture = (date) => {
   const currentDate = dayjs();
   const targetDate = dayjs(date);
   return targetDate.isAfter(currentDate, 'm');
 };
 
 const filter = {
-  [FILTER_TYPE.EVERYTHING]: (events) => events,
-  [FILTER_TYPE.FUTURE]: (events) => events.filter((event) => isDateFuture(event.dateTo)),
+  [FILTER_LIST.EVERYTHING]: (events) => events,
+  [FILTER_LIST.FUTURE]: (events) => events.filter((event) => dateFuture(event.dateTo)),
 };
 
-const isFormValid = (state, availableDestinations) => {
-  const allIds = Object.keys(availableDestinations);
-
-  return (allIds.includes(`${state.destination - 1}`) && /^\d+$/.test(state.basePrice));
-};
-
-export { isFormValid, filter, isDatesEqual, sortDays, sortPrices, getDate, getTime, getFullDataTime };
+export { formValid as isFormValid, filter, dateEquals as isDatesEqual, daySort as sortDays, priceSort as sortPrices, getDate, getTime, getFullTime as getFullDataTime };
