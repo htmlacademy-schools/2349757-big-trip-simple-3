@@ -5,6 +5,7 @@
   "description": "Проект «Большое путешествие (простой)» от HTML Academy",
   "scripts": {
     "start": "webpack serve --mode development --open",
+    "lint_fix": "eslint src/ --fix",
     "lint": "eslint src/",
     "build": "webpack --mode production"
   },
@@ -16,9 +17,9 @@
     "not < 0.25%"
   ],
   "devDependencies": {
-    "@babel/core": "^7.20.5",
-    "@babel/preset-env": "^7.20.2",
-    "babel-loader": "^9.1.2",
+    "@babel/core": "7.20.5",
+    "@babel/preset-env": "7.20.2",
+    "babel-loader": "^9.1.0",
     "copy-webpack-plugin": "11.0.0",
     "css-loader": "6.7.2",
     "eslint": "8.28.0",
@@ -26,17 +27,20 @@
     "style-loader": "3.3.1",
     "webpack": "5.75.0",
     "webpack-cli": "5.0.0",
-    "webpack-dev-server": "^4.11.1"
+    "webpack-dev-server": "4.11.1"
   },
   "engines": {
     "node": "18"
   },
   "dependencies": {
+    "@babel/core": "^7.21.8",
+    "@babel/preset-env": "^7.21.5",
     "copy-webpack-plugin": "^11.0.0",
     "dayjs": "1.11.6",
     "flatpickr": "4.6.13",
     "he": "1.2.0",
     "webpack": "^5.82.1",
-    "webpack-cli": "^5.1.1"
+    "webpack-cli": "^5.1.1",
+    "webpack-dev-server": "^4.15.0"
   }
 }
